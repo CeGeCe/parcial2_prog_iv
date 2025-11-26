@@ -4,6 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.core.mail import send_mail
 from django.conf import settings
 from .forms import RegistroForm
+import socket
 
 # Create your views here.
 
@@ -12,19 +13,29 @@ def registro_view(request):
     if request.method == 'POST':
         form = RegistroForm(request.POST)
         if form.is_valid():
-            # Guardar usuario
+            # 1. Guardamos el usuario (ESTO ES LO IMPORTANTE)
             user = form.save()
             
-            # ENVIAR EMAIL DE BIENVENIDA
-            send_mail(
-                '¡Bienvenido al Parcial!',
-                f'Hola {user.username}, gracias por registrarte en nuestra plataforma.',
-                settings.EMAIL_HOST_USER,
-                [user.email],
-                fail_silently=False,
-            )
-            
-            # Loguear y redirigir
+            # 2. Intentamos enviar el mail, pero si falla, NO rompemos nada
+            try:
+                # 2. Le decimos a Python: "Si tardas más de 5 segs, cancela"
+                socket.setdefaulttimeout(5)
+
+                print("Intentando enviar email...")
+                send_mail(
+                    '¡Bienvenido al Parcial!',
+                    f'Hola {user.username}, gracias por registrarte.',
+                    settings.EMAIL_HOST_USER,
+                    [user.email],
+                    fail_silently=False,
+                )
+                print("Email enviado con éxito.")
+            except Exception as e:
+                # Si falla (Timeout, Auth, lo que sea), solo lo imprimimos en el log
+                print(f"⚠️ FALLÓ EL ENVÍO DE EMAIL: {e}")
+                print("Continuando con el registro sin email...")
+
+            # 3. Logueamos y redirigimos (El usuario ni se entera del fallo)
             login(request, user)
             return redirect('home')
     else:
