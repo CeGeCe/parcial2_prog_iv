@@ -146,7 +146,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # --- Config. para EMAIL ---
 # ==========================
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# ESTO HACE QUE EL MAIL SE VEA EN EL LOG Y NO SE MANDE POR GMAIL
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' # La que va
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
