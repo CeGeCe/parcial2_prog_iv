@@ -148,15 +148,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # ESTO HACE QUE EL MAIL SE VEA EN EL LOG Y NO SE MANDE POR GMAIL
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' # La que va
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'smtp-relay.brevo.com'
 
-EMAIL_PORT = 465
-EMAIL_USE_TLS = False
-EMAIL_USE_SSL = True # (Más seguro y directo)
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+# EMAIL_USE_SSL = True # (Más seguro y directo)
 
-EMAIL_HOST_USER = 'cristiangcabral@gmail.com' # EL DE VERDAD
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER = 'cristiangcabral@gmail.com' # EL DE Brevo
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD') # La clave larga de Brevo (en Render)
+
+DEFAULT_FROM_EMAIL = 'cristiangcabral@gmail.com'
 
 
 # ==========================
