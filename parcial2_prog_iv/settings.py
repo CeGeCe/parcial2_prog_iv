@@ -79,13 +79,19 @@ WSGI_APPLICATION = 'parcial2_prog_iv.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# Si estamos en Render (hay DATABASE_URL), usa PostgreSQL. Si no, usa SQLite local.
+# CONFIGURACIÓN DE BASE DE DATOS (Versión Robusta)
 DATABASES = {
-    'default': dj_database_url.config(
-        default='sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3'),
-        conn_max_age=600
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
 }
+
+# Solo si estamos en Render y existe la variable DATABASE_URL, usamos PostgreSQL
+# (Esto previene que falle si la variable no existe)
+db_from_env = dj_database_url.config(conn_max_age=600)
+if db_from_env:
+    DATABASES['default'].update(db_from_env)
 
 
 # Password validation
